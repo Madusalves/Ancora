@@ -1,20 +1,16 @@
 {
   "expo": {
-    "name": "Finora",
-    "slug": "finora",
+    "name": "Âncora",
+    "slug": "ancora",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "finora",
-    "userInterfaceStyle": "automatic",
-    "ios": {
-      "icon": "./assets/expo.icon"
-    },
+    "scheme": "ancora",
+    "userInterfaceStyle": "dark",
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
+        "backgroundColor": "#0c0c0d",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
-        "backgroundImage": "./assets/images/android-icon-background.png",
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false
@@ -28,9 +24,9 @@
       [
         "expo-splash-screen",
         {
-          "backgroundColor": "#f7f9fb",
-          "image": "./assets/images/splash-icon.png",
-          "imageWidth": 76
+          "backgroundColor": "#0c0c0d",
+          "image": "./assets/images/splash-icon-dark.png",
+          "imageWidth": 200
         }
       ],
       "expo-sharing",
