@@ -1,0 +1,1 @@
+-- Dados de seed locais. Usuários e categorias padrão são criados via trigger no cadastro.
