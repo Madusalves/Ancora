@@ -1,13 +1,14 @@
 import { Ionicons } from '@expo/vector-icons';
+import { useQueryClient } from '@tanstack/react-query';
 import { Image } from 'expo-image';
 import Constants from 'expo-constants';
 import { useRouter } from 'expo-router';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Modal, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { KeyboardAvoidingView, Modal, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Card } from '@/components/Card';
-import { signOut } from '@/features/auth/actions';
+import { deleteAccount, signOut } from '@/features/auth/actions';
 import { useBills } from '@/features/bills/api';
 import { useMe, useRecentTransactions, useUpdateName } from '@/features/home/api';
 import { monthSummary } from '@/features/home/stats';
@@ -15,7 +16,7 @@ import { resetTour } from '@/features/tour/storage';
 import { useAccounts } from '@/features/transactions/api';
 import { formatBRL } from '@/features/transactions/format';
 import { t } from '@/i18n/pt-BR';
-import { colors, fonts, radius } from '@/theme';
+import { colors, fonts, radius, createStyles, getScheme } from '@/theme';
 import { useScreenLayout } from '@/theme/layout';
 
 type IconName = React.ComponentProps<typeof Ionicons>['name'];
@@ -30,9 +31,13 @@ export default function Profile() {
   const txs = useRecentTransactions();
   const bills = useBills();
   const updateName = useUpdateName();
+  const queryClient = useQueryClient();
 
   const [nameOpen, setNameOpen] = useState(false);
   const [draft, setDraft] = useState('');
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [deleteFailed, setDeleteFailed] = useState(false);
   const tipShown = useRef(false);
 
   // Dica automática (uma vez por visita) quando o nome ainda vem do e-mail.
@@ -62,6 +67,20 @@ export default function Profile() {
   const goBack = () => (router.canGoBack() ? router.back() : router.replace('/home'));
   const logout = async () => {
     await signOut();
+    router.replace('/login');
+  };
+
+  const confirmDelete = async () => {
+    setDeleting(true);
+    setDeleteFailed(false);
+    const result = await deleteAccount();
+    setDeleting(false);
+    if (!result.ok) {
+      setDeleteFailed(true);
+      return;
+    }
+    setDeleteOpen(false);
+    queryClient.clear();
     router.replace('/login');
   };
 
@@ -150,13 +169,22 @@ export default function Profile() {
           <Ionicons name="log-out-outline" size={18} color={colors.error} />
           <Text style={styles.signOutText}>{copy.signOut}</Text>
         </Pressable>
+        <Pressable
+          accessibilityRole="button"
+          onPress={() => {
+            setDeleteFailed(false);
+            setDeleteOpen(true);
+          }}
+          style={styles.deleteLink}>
+          <Text style={styles.deleteLinkText}>{copy.deleteAccount}</Text>
+        </Pressable>
         <Text style={styles.version}>
           {copy.version} {Constants.expoConfig?.version ?? ''}
         </Text>
       </ScrollView>
 
       <Modal visible={nameOpen} transparent animationType="fade" onRequestClose={() => setNameOpen(false)}>
-        <View style={styles.backdrop}>
+        <KeyboardAvoidingView style={styles.backdrop} behavior="padding">
           <View style={styles.dialog}>
             <View style={styles.tipIcon}>
               <Ionicons name="bulb-outline" size={22} color={colors.primary} />
@@ -169,6 +197,8 @@ export default function Profile() {
               onChangeText={setDraft}
               placeholder={copy.namePlaceholder}
               placeholderTextColor={colors.textSubtle}
+              keyboardAppearance={getScheme()}
+              cursorColor={colors.primary}
               autoCapitalize="words"
               maxLength={60}
               returnKeyType="done"
@@ -185,6 +215,35 @@ export default function Profile() {
             </Pressable>
             <Pressable accessibilityRole="button" onPress={() => setNameOpen(false)} style={styles.skipBtn}>
               <Text style={styles.skipText}>{copy.nameSkip}</Text>
+            </Pressable>
+          </View>
+        </KeyboardAvoidingView>
+      </Modal>
+
+      <Modal visible={deleteOpen} transparent animationType="fade" onRequestClose={() => {
+          if (!deleting) setDeleteOpen(false);
+        }}>
+        <View style={styles.backdrop}>
+          <View style={styles.dialog}>
+            <View style={[styles.tipIcon, styles.dangerIcon]}>
+              <Ionicons name="trash-outline" size={22} color={colors.error} />
+            </View>
+            <Text style={styles.dialogTitle}>{copy.deleteTitle}</Text>
+            <Text style={styles.dialogBody}>{copy.deleteBody}</Text>
+            {deleteFailed ? <Text style={styles.dialogError}>{copy.deleteError}</Text> : null}
+            <Pressable
+              accessibilityRole="button"
+              disabled={deleting}
+              onPress={confirmDelete}
+              style={[styles.saveBtn, styles.dangerBtn, deleting && styles.saveBtnOff]}>
+              <Text style={styles.saveText}>{copy.deleteConfirm}</Text>
+            </Pressable>
+            <Pressable
+              accessibilityRole="button"
+              disabled={deleting}
+              onPress={() => setDeleteOpen(false)}
+              style={styles.skipBtn}>
+              <Text style={styles.skipText}>{copy.deleteCancel}</Text>
             </Pressable>
           </View>
         </View>
@@ -245,7 +304,7 @@ function Row({
   );
 }
 
-const styles = StyleSheet.create({
+const styles = createStyles(() => ({
   flex: { flex: 1 },
   screen: { flex: 1, backgroundColor: colors.background },
   header: {
@@ -266,7 +325,7 @@ const styles = StyleSheet.create({
   nameRow: { flexDirection: 'row', alignItems: 'center', gap: 8, maxWidth: '100%' },
   name: { flexShrink: 1, fontFamily: fonts.displayBold, fontSize: 22, lineHeight: 28, color: colors.text },
 
-  backdrop: { flex: 1, backgroundColor: 'rgba(15,23,42,0.45)', alignItems: 'center', justifyContent: 'center', padding: 24 },
+  backdrop: { flex: 1, backgroundColor: colors.backdrop, alignItems: 'center', justifyContent: 'center', padding: 24 },
   dialog: { width: '100%', maxWidth: 400, backgroundColor: colors.surface, borderRadius: 24, padding: 24, gap: 8 },
   tipIcon: {
     width: 44,
@@ -361,5 +420,9 @@ const styles = StyleSheet.create({
     borderRadius: radius.md,
   },
   signOutText: { fontFamily: fonts.semiBold, fontSize: 14, color: colors.error },
+  deleteLink: { height: 40, alignItems: 'center', justifyContent: 'center' },
+  deleteLinkText: { fontFamily: fonts.medium, fontSize: 13, color: colors.textSubtle, textDecorationLine: 'underline' },
+  dangerIcon: { backgroundColor: colors.errorSoft },
+  dangerBtn: { backgroundColor: colors.error },
   version: { textAlign: 'center', fontFamily: fonts.regular, fontSize: 11, color: colors.textSubtle },
-});
+}));

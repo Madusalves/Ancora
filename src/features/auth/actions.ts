@@ -1,4 +1,5 @@
 import * as Linking from 'expo-linking';
+import * as Notifications from 'expo-notifications';
 import * as WebBrowser from 'expo-web-browser';
 
 import { t } from '@/i18n/pt-BR';
@@ -90,4 +91,19 @@ export async function signInWithGoogle(): Promise<AuthResult> {
 
 export async function signOut(): Promise<void> {
   await supabase.auth.signOut();
+}
+
+/** Exclui a conta e todos os dados do usuário (função `delete_my_account` no banco). */
+export async function deleteAccount(): Promise<AuthResult> {
+  const { error } = await supabase.rpc('delete_my_account');
+  if (error) return { ok: false, message: t.profile.deleteError };
+
+  // A sessão local deixou de existir no servidor; limpa o que ficou no aparelho.
+  try {
+    await Notifications.cancelAllScheduledNotificationsAsync();
+  } catch {
+    // Sem suporte (web): nada agendado para cancelar.
+  }
+  await supabase.auth.signOut({ scope: 'local' });
+  return { ok: true };
 }

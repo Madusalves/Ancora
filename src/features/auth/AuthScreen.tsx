@@ -1,22 +1,13 @@
 import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
-import { useState } from 'react';
-import {
-  KeyboardAvoidingView,
-  Platform,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from 'react-native';
+import { useRef, useState, type ComponentRef } from 'react';
+import { KeyboardAvoidingView, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Button } from '@/components/Button';
 import { PasswordInput } from '@/components/PasswordInput';
 import { t } from '@/i18n/pt-BR';
-import { colors, fonts, radius } from '@/theme';
+import { colors, createStyles, fonts, getScheme, radius } from '@/theme';
 
 import { emailRegistered, isValidEmail, sendEmailCode, signInWithGoogle, signInWithPassword } from './actions';
 
@@ -30,6 +21,7 @@ export function AuthScreen({ mode }: { mode: Mode }) {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
+  const passwordRef = useRef<ComponentRef<typeof TextInput>>(null);
 
   const isLogin = mode === 'login';
 
@@ -88,10 +80,11 @@ export function AuthScreen({ mode }: { mode: Mode }) {
 
   return (
     <SafeAreaView style={styles.screen}>
-      <KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+      <KeyboardAvoidingView style={styles.flex} behavior="padding">
         <ScrollView
           contentContainerStyle={styles.scroll}
           keyboardShouldPersistTaps="handled"
+          keyboardDismissMode="on-drag"
           showsVerticalScrollIndicator={false}>
           <View style={styles.card}>
             <Text style={styles.brand}>{t.brand}</Text>
@@ -124,14 +117,17 @@ export function AuthScreen({ mode }: { mode: Mode }) {
                   if (error) setError('');
                 }}
                 placeholder={t.auth.emailPlaceholder}
-                placeholderTextColor={colors.outline}
+                placeholderTextColor={colors.placeholder}
                 keyboardType="email-address"
                 autoCapitalize="none"
                 autoComplete="email"
                 autoCorrect={false}
                 textContentType="emailAddress"
                 returnKeyType={isLogin ? 'next' : 'send'}
-                onSubmitEditing={isLogin ? undefined : submitEmail}
+                onSubmitEditing={isLogin ? () => passwordRef.current?.focus() : submitEmail}
+                keyboardAppearance={getScheme()}
+                selectionColor={colors.primary}
+                cursorColor={colors.primary}
                 editable={!busy}
                 style={[styles.field, styles.input]}
               />
@@ -139,6 +135,7 @@ export function AuthScreen({ mode }: { mode: Mode }) {
               {isLogin ? (
                 <>
                   <PasswordInput
+                    inputRef={passwordRef}
                     value={password}
                     onChangeText={(v) => {
                       setPassword(v);
@@ -187,7 +184,7 @@ export function AuthScreen({ mode }: { mode: Mode }) {
   );
 }
 
-const styles = StyleSheet.create({
+const styles = createStyles(() => ({
   flex: { flex: 1 },
   screen: { flex: 1, backgroundColor: colors.background },
   scroll: { flexGrow: 1, justifyContent: 'center', paddingHorizontal: 16, paddingVertical: 24 },
@@ -197,7 +194,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     alignItems: 'center',
     padding: 25,
-    backgroundColor: 'rgba(255,255,255,0.8)',
+    backgroundColor: colors.glass,
     borderWidth: 1,
     borderColor: colors.outlineSoft,
     borderRadius: radius.md,
@@ -280,4 +277,4 @@ const styles = StyleSheet.create({
     letterSpacing: 0.6,
     color: colors.primary,
   },
-});
+}));

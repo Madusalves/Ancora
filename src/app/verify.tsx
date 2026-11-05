@@ -1,13 +1,13 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Button } from '@/components/Button';
 import { needsPassword, sendEmailCode, verifyEmailCode } from '@/features/auth/actions';
 import { t } from '@/i18n/pt-BR';
-import { colors, fonts, radius } from '@/theme';
+import { colors, fonts, radius, createStyles } from '@/theme';
 
 const CODE_LENGTH = 6;
 const RESEND_SECONDS = 60;
@@ -183,7 +183,7 @@ export default function Verify() {
   );
 }
 
-const styles = StyleSheet.create({
+const styles = createStyles(() => ({
   flex: { flex: 1 },
   screen: { flex: 1, backgroundColor: colors.background },
   header: {
@@ -205,7 +205,7 @@ const styles = StyleSheet.create({
     width: 96,
     height: 96,
     borderRadius: radius.pill,
-    backgroundColor: '#e3ede8',
+    backgroundColor: colors.primaryContainer,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 16,
@@ -316,4 +316,4 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
   },
   helpLink: { fontFamily: fonts.semiBold, color: colors.primary, textDecorationLine: 'underline' },
-});
+}));

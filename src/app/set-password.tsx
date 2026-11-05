@@ -1,13 +1,13 @@
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { KeyboardAvoidingView, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Button } from '@/components/Button';
 import { PasswordInput } from '@/components/PasswordInput';
 import { MIN_PASSWORD, setAccountPassword } from '@/features/auth/actions';
 import { t } from '@/i18n/pt-BR';
-import { colors, fonts, radius } from '@/theme';
+import { colors, fonts, radius, createStyles } from '@/theme';
 
 /**
  * Definir senha (após o código por e-mail). Não existe no Figma: usa o mesmo cartão
@@ -35,7 +35,7 @@ export default function SetPassword() {
 
   return (
     <SafeAreaView style={styles.screen}>
-      <KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+      <KeyboardAvoidingView style={styles.flex} behavior="padding">
         <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
           <View style={styles.card}>
             <Text style={styles.brand}>{t.brand}</Text>
@@ -81,7 +81,7 @@ export default function SetPassword() {
   );
 }
 
-const styles = StyleSheet.create({
+const styles = createStyles(() => ({
   flex: { flex: 1 },
   screen: { flex: 1, backgroundColor: colors.background },
   scroll: { flexGrow: 1, justifyContent: 'center', paddingHorizontal: 16, paddingVertical: 24 },
@@ -91,7 +91,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     alignItems: 'center',
     padding: 25,
-    backgroundColor: 'rgba(255,255,255,0.8)',
+    backgroundColor: colors.glass,
     borderWidth: 1,
     borderColor: colors.outlineSoft,
     borderRadius: radius.md,
@@ -127,4 +127,4 @@ const styles = StyleSheet.create({
   error: { fontFamily: fonts.medium, fontSize: 12, lineHeight: 16, color: colors.error, textAlign: 'center' },
   button: { width: '100%' },
   busy: { opacity: 0.7 },
-});
+}));
