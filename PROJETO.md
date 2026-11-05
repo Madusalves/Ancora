@@ -1,10 +1,10 @@
-# Finora — Resumo do Projeto
+# Âncora — Resumo do Projeto
 
 > Última atualização: 04/11/2026
 
 ## 1. Contexto
 
-**Finora** é um aplicativo mobile de **finanças pessoais** em português (pt-BR). A ideia é ser simples e manual: o usuário registra o que ganha e o que gasta, acompanha contas a pagar e define limites de gasto. **Nada se conecta a banco ou cartão** — todos os valores são digitados pelo próprio usuário.
+**Âncora** é um aplicativo mobile de **finanças pessoais** em português (pt-BR). A ideia é ser simples e manual: o usuário registra o que ganha e o que gasta, acompanha contas a pagar e define limites de gasto. **Nada se conecta a banco ou cartão** — todos os valores são digitados pelo próprio usuário.
 
 O design vem do Figma (as telas citam os nós, ex.: Splash `25:4`, Orçamentos e Limites `43:416`).
 
