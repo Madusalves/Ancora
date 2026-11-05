@@ -1,7 +1,7 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 
-import { colors, fonts } from '@/theme';
+import { colors, fonts, createStyles } from '@/theme';
 
 const SIZE = 156;
 const STROKE = 14;
@@ -37,9 +37,9 @@ export function Gauge({ value, caption, color = colors.primary }: GaugeProps) {
   );
 }
 
-const styles = StyleSheet.create({
+const styles = createStyles(() => ({
   wrap: { width: SIZE, height: SIZE / 2 + STROKE / 2, alignSelf: 'center' },
   center: { position: 'absolute', left: 0, right: 0, bottom: 0, alignItems: 'center' },
   value: { fontFamily: fonts.displayBold, fontSize: 28, lineHeight: 32, letterSpacing: -0.5, color: colors.text },
   caption: { fontFamily: fonts.regular, fontSize: 11, lineHeight: 14, color: colors.textMuted },
-});
+}));

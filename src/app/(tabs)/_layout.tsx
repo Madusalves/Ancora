@@ -1,13 +1,13 @@
 import { TabList, TabSlot, TabTrigger, Tabs } from 'expo-router/ui';
 import { useEffect } from 'react';
-import { StyleSheet } from 'react-native';
+
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { TabButton } from '@/components/TabButton';
 import { useBills } from '@/features/bills/api';
 import { configureNotifications, syncBillReminders } from '@/features/bills/notifications';
 import { t } from '@/i18n/pt-BR';
-import { colors } from '@/theme';
+import { colors, createStyles } from '@/theme';
 
 /** Navegação principal: Início, Transações, Metas e Relatórios. */
 export default function TabsLayout() {
@@ -42,7 +42,7 @@ export default function TabsLayout() {
   );
 }
 
-const styles = StyleSheet.create({
+const styles = createStyles(() => ({
   root: { flex: 1, backgroundColor: colors.background },
   bar: {
     flexDirection: 'row',
@@ -56,4 +56,4 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 24,
     boxShadow: '0px -4px 12px rgba(15,23,42,0.05)',
   },
-});
+}));

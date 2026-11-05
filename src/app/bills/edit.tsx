@@ -1,12 +1,12 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect } from 'react';
-import { ActivityIndicator, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, View } from 'react-native';
 
 import { useBills, useUpdateBill } from '@/features/bills/api';
 import { BillForm } from '@/features/bills/BillForm';
 import { parseDay } from '@/features/home/stats';
 import { t } from '@/i18n/pt-BR';
-import { colors } from '@/theme';
+import { colors, createStyles } from '@/theme';
 
 export default function EditBill() {
   const router = useRouter();
@@ -49,6 +49,6 @@ export default function EditBill() {
   );
 }
 
-const styles = StyleSheet.create({
+const styles = createStyles(() => ({
   center: { flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.background },
-});
+}));

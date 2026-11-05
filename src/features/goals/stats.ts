@@ -12,17 +12,33 @@ export function limitStatus(ratio: number): LimitStatus {
 }
 
 export const STATUS_COLOR: Record<LimitStatus, string> = {
-  ok: colors.primary,
-  watch: colors.primary,
-  warn: '#f59e0b',
-  over: colors.error,
+  get ok() {
+    return colors.primary;
+  },
+  get watch() {
+    return colors.primary;
+  },
+  get warn() {
+    return colors.warning;
+  },
+  get over() {
+    return colors.error;
+  },
 };
 
 export const STATUS_SOFT: Record<LimitStatus, string> = {
-  ok: colors.primaryContainerTint,
-  watch: colors.primaryContainerTint,
-  warn: colors.warningSoft,
-  over: colors.errorSoft,
+  get ok() {
+    return colors.primaryContainerTint;
+  },
+  get watch() {
+    return colors.primaryContainerTint;
+  },
+  get warn() {
+    return colors.warningSoft;
+  },
+  get over() {
+    return colors.errorSoft;
+  },
 };
 
 export type MonthSpend = {

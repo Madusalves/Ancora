@@ -1,6 +1,6 @@
 // Textos da interface (PT-BR). Centralizados para facilitar uma futura i18n.
 export const t = {
-  brand: 'Finora',
+  brand: 'Âncora',
   splash: {
     tagline: 'Simplificando sua vida financeira',
   },
@@ -80,7 +80,7 @@ export const t = {
     resendIn: 'Reenviar em',
     resend: 'Reenviar código por e-mail',
     confirm: 'Confirmar e continuar',
-    secureTitle: 'Ambiente seguro Finora',
+    secureTitle: 'Ambiente seguro Âncora',
     secureBody: 'Nunca compartilhamos seus dados financeiros. O código expira em 10 minutos.',
     help: 'Precisa de ajuda com o acesso?',
     contact: 'Fale conosco',
@@ -182,9 +182,18 @@ export const t = {
     nameSkip: 'Agora não',
     nameError: 'Não foi possível salvar. Tente novamente.',
     signOut: 'Sair da conta',
+    deleteAccount: 'Excluir minha conta',
+    deleteTitle: 'Excluir conta?',
+    deleteBody:
+      'Isso apaga sua conta e todos os seus dados (transações, contas a pagar, orçamentos e limites). Não dá para desfazer.',
+    deleteConfirm: 'Excluir definitivamente',
+    deleteCancel: 'Cancelar',
+    deleteError: 'Não foi possível excluir a conta. Tente novamente.',
     version: 'Versão',
   },
   home: {
+    themeToDark: 'Usar tema escuro',
+    themeToLight: 'Usar tema claro',
     greeting: 'Olá',
     deposit: 'Nova receita',
     spend: 'Nova despesa',
@@ -228,7 +237,7 @@ export const t = {
     loadError: 'Não foi possível carregar seus dados.',
   },
   reports: {
-    eyebrow: 'Finora analítico',
+    eyebrow: 'Âncora analítico',
     title: 'Relatórios & Análise',
     modes: { week: 'Semanal', month: 'Mensal', year: 'Anual', custom: 'Personalizado' },
     prev: 'Período anterior',

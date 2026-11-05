@@ -1,6 +1,6 @@
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Button } from '@/components/Button';
@@ -12,7 +12,7 @@ import {
 } from '@/features/onboarding/illustrations';
 import { markOnboardingSeen } from '@/features/onboarding/storage';
 import { t } from '@/i18n/pt-BR';
-import { colors, fonts } from '@/theme';
+import { colors, fonts, createStyles } from '@/theme';
 
 const arrow12 = require('../../assets/icons/arrow-right-12.svg');
 const arrow9 = require('../../assets/icons/arrow-right-9.svg');
@@ -86,7 +86,7 @@ export default function Onboarding() {
   );
 }
 
-const styles = StyleSheet.create({
+const styles = createStyles(() => ({
   screen: { flex: 1, backgroundColor: colors.background },
   brand: {
     position: 'absolute',
@@ -126,4 +126,4 @@ const styles = StyleSheet.create({
   footer: { alignItems: 'center', gap: 32, paddingHorizontal: 16, paddingTop: 24, paddingBottom: 16 },
   actions: { flexDirection: 'row', gap: 16, width: '100%', maxWidth: 384 },
   actionsBetween: { justifyContent: 'space-between' },
-});
+}));

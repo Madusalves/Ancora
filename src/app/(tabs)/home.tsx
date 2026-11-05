@@ -2,7 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
 import { useEffect, useMemo, useState } from 'react';
-import { ActivityIndicator, type LayoutChangeEvent, type NativeScrollEvent, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, type LayoutChangeEvent, type NativeScrollEvent, Pressable, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Card } from '@/components/Card';
@@ -19,10 +19,11 @@ import { type TourStep, useTour, useTourTarget } from '@/features/tour/TourProvi
 import { useAccounts } from '@/features/transactions/api';
 import { formatBRL, formatDecimal } from '@/features/transactions/format';
 import { t } from '@/i18n/pt-BR';
-import { colors, fonts, radius } from '@/theme';
+import { colors, fonts, radius, createStyles } from '@/theme';
+import { useThemeControl } from '@/theme/ThemeProvider';
 import { useScreenLayout } from '@/theme/layout';
 
-const DOT_COLORS = [colors.primary, '#4f46e5', colors.textSubtle];
+const dotColors = () => [colors.primary, '#5b9bd5', colors.textSubtle];
 
 const HOME_TOUR: TourStep[] = [
   { id: 'home-avatar', title: t.tour.avatarTitle, body: t.tour.avatarBody },
@@ -37,6 +38,7 @@ const HOME_TOUR: TourStep[] = [
 export default function Home() {
   const router = useRouter();
   const layout = useScreenLayout();
+  const { scheme, toggle: toggleTheme } = useThemeControl();
   const me = useMe();
   const accounts = useAccounts();
   const txs = useRecentTransactions();
@@ -96,11 +98,19 @@ export default function Home() {
               <Text style={styles.avatarText}>{me.data?.initials || '·'}</Text>
             )}
           </Pressable>
-          <View>
+          <View style={styles.flex}>
             <Text style={styles.hello}>
               {t.home.greeting}, {me.data?.firstName ?? ''} 👋
             </Text>
           </View>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={scheme === 'dark' ? t.home.themeToLight : t.home.themeToDark}
+            onPress={toggleTheme}
+            hitSlop={8}
+            style={styles.themeBtn}>
+            <Ionicons name={scheme === 'dark' ? 'sunny-outline' : 'moon-outline'} size={20} color={colors.text} />
+          </Pressable>
         </View>
 
         {/* Ações rápidas: rola para o lado; a seta indica que há mais ações */}
@@ -206,13 +216,13 @@ export default function Home() {
                   <Gauge
                     value={month.spentShare}
                     caption={month.expense > month.income ? t.home.overIncome : t.home.ofIncome}
-                    color={month.expense > month.income ? colors.error : colors.primary}
+                    color={month.expense > month.income ? colors.expense : colors.income}
                   />
                 </View>
                 <View style={styles.legend}>
                   {month.top.map((c, i) => (
                     <View key={c.name} style={styles.legendItem}>
-                      <View style={[styles.dot, { backgroundColor: DOT_COLORS[i] }]} />
+                      <View style={[styles.dot, { backgroundColor: dotColors()[i] }]} />
                       <Text style={styles.legendName} numberOfLines={1}>
                         {c.name}
                       </Text>
@@ -338,7 +348,7 @@ function Insight({
   return (
     <View style={styles.insight}>
       <View style={styles.insightIcon}>
-        <Ionicons name="sparkles" size={18} color={colors.onPrimary} />
+        <Ionicons name="sparkles" size={18} color="#ffffff" />
       </View>
       <View style={styles.flex}>
         <Text style={styles.insightTitle}>{title}</Text>
@@ -351,7 +361,7 @@ function Insight({
   );
 }
 
-const styles = StyleSheet.create({
+const styles = createStyles(() => ({
   flex: { flex: 1 },
   screen: { flex: 1, backgroundColor: colors.background },
   content: { paddingHorizontal: 16, paddingTop: 12, paddingBottom: 24, gap: 16 },
@@ -365,10 +375,20 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     overflow: 'hidden',
   },
+  themeBtn: {
+    width: 40,
+    height: 40,
+    borderRadius: radius.pill,
+    backgroundColor: colors.surface,
+    borderWidth: 1,
+    borderColor: colors.outlineMedium,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   avatarImg: { width: 52, height: 52 },
   avatarText: { fontFamily: fonts.displayBold, fontSize: 18, color: colors.primary },
   hello: { fontFamily: fonts.medium, fontSize: 13, lineHeight: 18, color: colors.textMuted },
-  brand: { fontFamily: fonts.displayBold, fontSize: 32, lineHeight: 38, letterSpacing: -0.5, color: colors.primary },
+  brand: { fontFamily: fonts.displayBold, fontSize: 32, lineHeight: 38, letterSpacing: -0.5, color: colors.gold },
 
   actionsWrap: { marginHorizontal: -16 },
   actions: { flexDirection: 'row', gap: 8, paddingHorizontal: 16 },
@@ -380,7 +400,7 @@ const styles = StyleSheet.create({
     width: 28,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'rgba(247,249,251,0.92)',
+    backgroundColor: colors.scrim,
   },
   chip: {
     flexDirection: 'row',
@@ -458,19 +478,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 12,
     padding: 16,
-    backgroundColor: colors.primary,
+    backgroundColor: colors.highlight,
     borderRadius: radius.md,
   },
   insightIcon: {
     width: 36,
     height: 36,
     borderRadius: radius.sm,
-    backgroundColor: 'rgba(255,255,255,0.15)',
+    backgroundColor: 'rgba(0,0,0,0.22)',
     alignItems: 'center',
     justifyContent: 'center',
   },
   insightTitle: { fontFamily: fonts.semiBold, fontSize: 14, lineHeight: 20, color: colors.onPrimary },
-  insightBody: { fontFamily: fonts.regular, fontSize: 12, lineHeight: 16, color: 'rgba(255,255,255,0.85)' },
+  insightBody: { fontFamily: fonts.regular, fontSize: 12, lineHeight: 16, color: 'rgba(0,0,0,0.75)' },
   insightButton: { paddingHorizontal: 12, paddingVertical: 10, backgroundColor: colors.surface, borderRadius: radius.sm },
   insightButtonText: { fontFamily: fonts.semiBold, fontSize: 12, color: colors.primary },
 
@@ -478,4 +498,4 @@ const styles = StyleSheet.create({
   cardTitleBig: { fontFamily: fonts.semiBold, fontSize: 16, color: colors.text },
   seeAll: { fontFamily: fonts.semiBold, fontSize: 12, color: colors.primary },
   separator: { borderTopWidth: 1, borderTopColor: colors.outlineSoft },
-});
+}));

@@ -1,11 +1,11 @@
 import { StyleSheet, Text, View } from 'react-native';
 import Svg, { Circle, G } from 'react-native-svg';
 
-import { colors, fonts, radius } from '@/theme';
+import { colors, fonts, radius, createStyles } from '@/theme';
 
-import { FLOW_EXPENSE, FLOW_INCOME, SLICE_COLORS } from './palette';
+import { flowExpense, flowIncome, sliceColors } from './palette';
 
-export { FLOW_EXPENSE, FLOW_INCOME, SLICE_COLORS };
+export { flowExpense, flowIncome, sliceColors };
 
 const SIZE = 176;
 const STROKE = 22;
@@ -30,7 +30,7 @@ export function Donut({ shares, centerValue, centerLabel }: DonutProps) {
                 cx={SIZE / 2}
                 cy={SIZE / 2}
                 r={R}
-                stroke={SLICE_COLORS[i % SLICE_COLORS.length]}
+                stroke={sliceColors()[i % sliceColors().length]}
                 strokeWidth={STROKE}
                 fill="none"
                 strokeDasharray={`${Math.max(len - 2, 0)} ${C}`}
@@ -63,8 +63,8 @@ export function CashFlowChart({ items }: { items: FlowItem[] }) {
         return (
           <View key={it.key} style={styles.flowCol}>
             <View style={styles.bars}>
-              <View style={[styles.bar, { height: h(it.income), backgroundColor: FLOW_INCOME, opacity: last ? 1 : 0.85 }]} />
-              <View style={[styles.bar, { height: h(it.expense), backgroundColor: FLOW_EXPENSE }]} />
+              <View style={[styles.bar, { height: h(it.income), backgroundColor: flowIncome(), opacity: last ? 1 : 0.85 }]} />
+              <View style={[styles.bar, { height: h(it.expense), backgroundColor: flowExpense() }]} />
             </View>
             <Text style={[styles.flowLabel, last && styles.flowLabelOn]}>{it.label}</Text>
           </View>
@@ -74,7 +74,7 @@ export function CashFlowChart({ items }: { items: FlowItem[] }) {
   );
 }
 
-const styles = StyleSheet.create({
+const styles = createStyles(() => ({
   donut: { width: SIZE, height: SIZE, alignSelf: 'center' },
   donutCenter: { ...StyleSheet.absoluteFill, alignItems: 'center', justifyContent: 'center' },
   donutValue: { fontFamily: fonts.displayBold, fontSize: 26, lineHeight: 30, color: colors.text },
@@ -86,4 +86,4 @@ const styles = StyleSheet.create({
   bar: { width: 14, borderTopLeftRadius: radius.sm / 2, borderTopRightRadius: radius.sm / 2 },
   flowLabel: { fontFamily: fonts.medium, fontSize: 12, color: colors.textSubtle },
   flowLabelOn: { fontFamily: fonts.semiBold, color: colors.text },
-});
+}));

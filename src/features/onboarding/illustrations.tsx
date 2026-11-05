@@ -2,7 +2,7 @@ import { Image } from 'expo-image';
 import { StyleSheet, View } from 'react-native';
 
 import { BottomFade, Glow } from '@/components/Glow';
-import { colors, radius } from '@/theme';
+import { colors, radius, createStyles } from '@/theme';
 
 /** Passo 1 — carteira (Figma 25:180, slide 1). */
 export function WalletIllustration() {
@@ -74,8 +74,8 @@ export function SavingsIllustration() {
           <View style={[savings.bar, { height: 41.06, backgroundColor: colors.surfaceHighest }]}>
             <View style={[StyleSheet.absoluteFill, { backgroundColor: colors.outline, opacity: 0.5 }]} />
           </View>
-          <View style={[savings.bar, { height: 82.13, backgroundColor: 'rgba(0,105,72,0.2)' }]}>
-            <View style={[StyleSheet.absoluteFill, { backgroundColor: 'rgba(0,105,72,0.4)', opacity: 0.5 }]} />
+          <View style={[savings.bar, { height: 82.13, backgroundColor: 'rgba(193,154,30,0.2)' }]}>
+            <View style={[StyleSheet.absoluteFill, { backgroundColor: 'rgba(193,154,30,0.4)', opacity: 0.5 }]} />
           </View>
           <View style={[savings.bar, savings.barTop]}>
             <BottomFade color={colors.primaryStrong} />
@@ -88,7 +88,7 @@ export function SavingsIllustration() {
   );
 }
 
-const wallet = StyleSheet.create({
+const wallet = createStyles(() => ({
   box: { width: 280, height: 280 },
   circle: {
     ...StyleSheet.absoluteFill,
@@ -102,9 +102,9 @@ const wallet = StyleSheet.create({
   },
   greenGlow: { position: 'absolute', left: 0, bottom: 0 },
   indigoGlow: { position: 'absolute', right: 0, top: 0 },
-});
+}));
 
-const goals = StyleSheet.create({
+const goals = createStyles(() => ({
   wrap: { width: 192, height: 192, alignItems: 'center', justifyContent: 'center' },
   glow: { position: 'absolute' },
   ring: { width: 192, height: 192, alignItems: 'center', justifyContent: 'center' },
@@ -115,9 +115,9 @@ const goals = StyleSheet.create({
     transform: [{ rotate: '-90deg' }],
   },
   ringImage: { position: 'absolute', width: 168.96, height: 168.96 },
-});
+}));
 
-const savings = StyleSheet.create({
+const savings = createStyles(() => ({
   card: {
     width: '100%',
     maxWidth: 384,
@@ -177,7 +177,7 @@ const savings = StyleSheet.create({
     height: 123.19,
     backgroundColor: colors.primary,
     overflow: 'visible',
-    boxShadow: '0px -4px 10px rgba(0,105,72,0.3)',
+    boxShadow: '0px -4px 10px rgba(193,154,30,0.3)',
   },
   sparkle: {
     position: 'absolute',
@@ -186,7 +186,7 @@ const savings = StyleSheet.create({
     width: 8,
     height: 8,
     borderRadius: radius.pill,
-    backgroundColor: '#fff',
+    backgroundColor: colors.gold,
     opacity: 0.7,
   },
   base: {
@@ -195,4 +195,4 @@ const savings = StyleSheet.create({
     borderRadius: radius.pill,
     backgroundColor: colors.surfaceHighest,
   },
-});
+}));

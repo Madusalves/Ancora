@@ -1,11 +1,11 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
-import { StyleSheet, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 
 import { formatDecimal } from '@/features/transactions/format';
 import { CATEGORY_ICONS } from '@/features/transactions/icons';
 import { t } from '@/i18n/pt-BR';
-import { colors, fonts, radius } from '@/theme';
+import { colors, fonts, radius, createStyles } from '@/theme';
 
 import { parseDay, type Tx } from './stats';
 
@@ -32,7 +32,7 @@ export function TransactionRow({ tx }: { tx: Tx }) {
   const ic = tx.category ? CATEGORY_ICONS[tx.category.icon] : undefined;
   return (
     <View style={styles.row}>
-      <View style={[styles.tile, { backgroundColor: income ? colors.primaryContainerTint : colors.indigoContainer }]}>
+      <View style={[styles.tile, { backgroundColor: income ? colors.incomeSoft : colors.expenseSoft }]}>
         {ic ? (
           <Image source={ic.source} style={{ width: ic.width, height: ic.height }} contentFit="contain" />
         ) : (
@@ -47,19 +47,20 @@ export function TransactionRow({ tx }: { tx: Tx }) {
           {whenLabel(tx)} • {tx.category?.name ?? t.home.uncategorized}
         </Text>
       </View>
-      <Text style={[styles.amount, income && styles.amountIncome]}>
+      <Text style={[styles.amount, income ? styles.amountIncome : styles.amountExpense]}>
         {income ? '+' : '-'} R$ {formatDecimal(tx.amount)}
       </Text>
     </View>
   );
 }
 
-const styles = StyleSheet.create({
+const styles = createStyles(() => ({
   row: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 14 },
   tile: { width: 44, height: 44, borderRadius: radius.pill, alignItems: 'center', justifyContent: 'center' },
   info: { flex: 1, gap: 2 },
   title: { fontFamily: fonts.semiBold, fontSize: 14, lineHeight: 20, color: colors.text },
   sub: { fontFamily: fonts.regular, fontSize: 12, lineHeight: 16, color: colors.textMuted },
   amount: { fontFamily: fonts.semiBold, fontSize: 14, lineHeight: 20, color: colors.text, textAlign: 'right' },
-  amountIncome: { color: colors.primary },
-});
+  amountExpense: { color: colors.expense },
+  amountIncome: { color: colors.income },
+}));

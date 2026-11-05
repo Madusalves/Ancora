@@ -1,7 +1,7 @@
 import { Image, ImageSource } from 'expo-image';
-import { Pressable, StyleProp, StyleSheet, Text, View, ViewStyle } from 'react-native';
+import { Pressable, StyleProp, Text, View, ViewStyle } from 'react-native';
 
-import { colors, fonts, radius } from '@/theme';
+import { colors, fonts, radius, createStyles } from '@/theme';
 
 type Variant = 'primary' | 'outline' | 'ghost';
 
@@ -39,19 +39,19 @@ const labelColors: Record<Variant, string> = {
   ghost: colors.textMuted,
 };
 
-const variantStyles = StyleSheet.create({
+const variantStyles = createStyles(() => ({
   primary: {
     backgroundColor: colors.primary,
-    boxShadow: '0px 4px 5px rgba(0,105,72,0.2)',
+    boxShadow: '0px 4px 5px rgba(193,154,30,0.3)',
   },
   outline: {
     borderWidth: 1,
     borderColor: colors.outline,
   },
   ghost: {},
-});
+}));
 
-const styles = StyleSheet.create({
+const styles = createStyles(() => ({
   base: {
     minHeight: 44,
     paddingHorizontal: 24,
@@ -72,4 +72,4 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   labelLarge: { fontSize: 16, lineHeight: 24, letterSpacing: 0 },
-});
+}));

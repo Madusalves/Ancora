@@ -1,26 +1,31 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useState } from 'react';
-import { Pressable, StyleSheet, TextInput, TextInputProps, View } from 'react-native';
+import type { ComponentRef, Ref } from 'react';
+import { Pressable, TextInput, TextInputProps, View } from 'react-native';
 
 import { t } from '@/i18n/pt-BR';
-import { colors, fonts, radius } from '@/theme';
+import { colors, createStyles, fonts, getScheme, radius } from '@/theme';
 
 type Props = Pick<
   TextInputProps,
   'value' | 'onChangeText' | 'placeholder' | 'onSubmitEditing' | 'editable' | 'returnKeyType' | 'autoComplete'
->;
+> & { inputRef?: Ref<ComponentRef<typeof TextInput>> };
 
 /** Campo de senha com botão de mostrar/ocultar. Mesmo visual do campo de e-mail. */
-export function PasswordInput(props: Props) {
+export function PasswordInput({ inputRef, ...props }: Props) {
   const [visible, setVisible] = useState(false);
   return (
     <View style={styles.wrap}>
       <TextInput
         {...props}
+        ref={inputRef}
+        keyboardAppearance={getScheme()}
+        selectionColor={colors.primary}
+        cursorColor={colors.primary}
         secureTextEntry={!visible}
         autoCapitalize="none"
         autoCorrect={false}
-        placeholderTextColor={colors.outline}
+        placeholderTextColor={colors.placeholder}
         style={styles.input}
       />
       <Pressable
@@ -35,7 +40,7 @@ export function PasswordInput(props: Props) {
   );
 }
 
-const styles = StyleSheet.create({
+const styles = createStyles(() => ({
   wrap: {
     width: '100%',
     height: 48,
@@ -56,4 +61,4 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   eye: { position: 'absolute', right: 14, top: 0, bottom: 0, justifyContent: 'center' },
-});
+}));

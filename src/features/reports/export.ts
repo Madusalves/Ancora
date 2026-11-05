@@ -10,11 +10,11 @@ import { type Analysis, type Period } from './analysis';
 import { buildReportHtml } from './reportHtml';
 import { buildXlsx, XLSX_MIME } from './xlsx';
 
-const fileStem = (p: Period) => `finora-${toISODate(p.start)}_${toISODate(p.end)}`;
+const fileStem = (p: Period) => `ancora-${toISODate(p.start)}_${toISODate(p.end)}`;
 
 async function shareFile(uri: string, mimeType: string, uti: string) {
   if (await Sharing.isAvailableAsync()) {
-    await Sharing.shareAsync(uri, { mimeType, UTI: uti, dialogTitle: 'Finora' });
+    await Sharing.shareAsync(uri, { mimeType, UTI: uti, dialogTitle: 'Âncora' });
   }
 }
 

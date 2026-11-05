@@ -1,8 +1,8 @@
 import { Ionicons } from '@expo/vector-icons';
-import { Pressable, PressableProps, StyleSheet, Text, View } from 'react-native';
+import { Pressable, PressableProps, Text, View } from 'react-native';
 
 import { useTourTarget } from '@/features/tour/TourProvider';
-import { colors, fonts } from '@/theme';
+import { colors, fonts, createStyles } from '@/theme';
 
 type IconName = React.ComponentProps<typeof Ionicons>['name'];
 
@@ -44,7 +44,7 @@ export function TabButton({ label, icon, iconActive, isFocused, tourId, ...rest 
   );
 }
 
-const styles = StyleSheet.create({
+const styles = createStyles(() => ({
   button: { flex: 1, alignItems: 'center' },
   item: { minWidth: 64, alignItems: 'center', gap: 2, paddingVertical: 4 },
   circle: {
@@ -59,4 +59,4 @@ const styles = StyleSheet.create({
   circleOn: { backgroundColor: colors.primaryContainerTint },
   label: { fontFamily: fonts.medium, fontSize: 11, lineHeight: 14, color: colors.textSubtle },
   labelOn: { fontFamily: fonts.semiBold, color: colors.primary },
-});
+}));

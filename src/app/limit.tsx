@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useState } from 'react';
-import { KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { KeyboardAvoidingView, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Button } from '@/components/Button';
@@ -10,7 +10,7 @@ import { useCategories } from '@/features/transactions/api';
 import { NewCategoryModal } from '@/features/transactions/NewCategoryModal';
 import { formatCents } from '@/features/transactions/format';
 import { t } from '@/i18n/pt-BR';
-import { colors, fonts, radius } from '@/theme';
+import { colors, fonts, radius, createStyles, getScheme } from '@/theme';
 
 /**
  * Formulário de limites. `target`:
@@ -66,7 +66,7 @@ export default function LimitForm() {
 
   return (
     <SafeAreaView style={styles.screen}>
-      <KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+      <KeyboardAvoidingView style={styles.flex} behavior="padding">
         <View style={styles.header}>
           <Pressable accessibilityRole="button" accessibilityLabel="Voltar" onPress={() => router.back()} style={styles.iconBtn}>
             <Ionicons name="arrow-back" size={22} color={colors.text} />
@@ -121,6 +121,8 @@ export default function LimitForm() {
                   value={cents ? formatCents(cents) : ''}
                   placeholder="0,00"
                   placeholderTextColor={colors.placeholder}
+                  keyboardAppearance={getScheme()}
+                  cursorColor={colors.primary}
                   onChangeText={(v) => {
                     setError('');
                     setTyped(v.replace(/\D/g, '').replace(/^0+/, '').slice(0, 11));
@@ -160,7 +162,7 @@ export default function LimitForm() {
   );
 }
 
-const styles = StyleSheet.create({
+const styles = createStyles(() => ({
   flex: { flex: 1 },
   screen: { flex: 1, backgroundColor: colors.background },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingVertical: 8 },
@@ -206,6 +208,6 @@ const styles = StyleSheet.create({
   chipText: { fontFamily: fonts.medium, fontSize: 12, color: colors.textMuted },
   chipTextOn: { fontFamily: fonts.semiBold, color: colors.primary },
   error: { fontFamily: fonts.medium, fontSize: 12, color: colors.error, textAlign: 'center' },
-  footer: { padding: 16, backgroundColor: 'rgba(247,249,251,0.95)' },
+  footer: { padding: 16, backgroundColor: 'colors.scrimStrong' },
   disabled: { opacity: 0.6 },
-});
+}));

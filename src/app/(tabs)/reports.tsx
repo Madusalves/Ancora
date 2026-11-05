@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useMemo, useState } from 'react';
-import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Pressable, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Card } from '@/components/Card';
@@ -17,11 +17,11 @@ import {
   shiftAnchor,
   type Mode,
 } from '@/features/reports/analysis';
-import { CashFlowChart, Donut, FLOW_EXPENSE, FLOW_INCOME, SLICE_COLORS } from '@/features/reports/Charts';
+import { CashFlowChart, Donut, flowExpense, flowIncome, sliceColors } from '@/features/reports/Charts';
 import { exportPdf, exportSheet } from '@/features/reports/export';
 import { formatBRL, formatDecimal } from '@/features/transactions/format';
 import { t } from '@/i18n/pt-BR';
-import { colors, fonts, radius } from '@/theme';
+import { colors, fonts, radius, createStyles } from '@/theme';
 import { useScreenLayout } from '@/theme/layout';
 
 type Format = 'pdf' | 'csv';
@@ -197,7 +197,7 @@ export default function Reports() {
               <View style={styles.legend}>
                 {a.slices.map((s, i) => (
                   <View key={s.name} style={styles.legendItem}>
-                    <View style={[styles.dot, { backgroundColor: SLICE_COLORS[i % SLICE_COLORS.length] }]} />
+                    <View style={[styles.dot, { backgroundColor: sliceColors()[i % sliceColors().length] }]} />
                     <Text style={styles.legendName} numberOfLines={1}>
                       {s.name}
                     </Text>
@@ -221,11 +221,11 @@ export default function Reports() {
           </View>
           <View style={styles.flowLegend}>
             <View style={styles.legendItem}>
-              <View style={[styles.dot, { backgroundColor: FLOW_INCOME }]} />
+              <View style={[styles.dot, { backgroundColor: flowIncome() }]} />
               <Text style={styles.legendName}>{t.reports.income}</Text>
             </View>
             <View style={styles.legendItem}>
-              <View style={[styles.dot, { backgroundColor: FLOW_EXPENSE }]} />
+              <View style={[styles.dot, { backgroundColor: flowExpense() }]} />
               <Text style={styles.legendName}>{t.reports.expense}</Text>
             </View>
           </View>
@@ -340,7 +340,7 @@ function DisabledOption({ label, icon }: { label: string; icon: React.ComponentP
   );
 }
 
-const styles = StyleSheet.create({
+const styles = createStyles(() => ({
   flex: { flex: 1 },
   screen: { flex: 1, backgroundColor: colors.background },
   content: { paddingHorizontal: 16, paddingTop: 12, paddingBottom: 24, gap: 16 },
@@ -471,7 +471,7 @@ const styles = StyleSheet.create({
     gap: 8,
     borderRadius: radius.sm,
     backgroundColor: colors.primary,
-    boxShadow: '0px 4px 5px rgba(0,105,72,0.2)',
+    boxShadow: '0px 4px 5px rgba(193,154,30,0.3)',
   },
   primaryText: { fontFamily: fonts.semiBold, fontSize: 15, color: colors.onPrimary },
   outlineButton: {
@@ -486,4 +486,4 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surfaceLow,
   },
   outlineText: { fontFamily: fonts.semiBold, fontSize: 14, color: colors.textMuted },
-});
+}));

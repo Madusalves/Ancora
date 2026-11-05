@@ -2,7 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
 import { useMemo, useState } from 'react';
-import { ActivityIndicator, FlatList, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, FlatList, Pressable, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Card } from '@/components/Card';
@@ -12,7 +12,7 @@ import { billAmountLabel, lastPaidAmount } from '@/features/bills/format';
 import { formatBRL, formatCents } from '@/features/transactions/format';
 import { CATEGORY_ICONS } from '@/features/transactions/icons';
 import { t } from '@/i18n/pt-BR';
-import { colors, fonts, radius } from '@/theme';
+import { colors, fonts, radius, createStyles, getScheme } from '@/theme';
 import { useScreenLayout } from '@/theme/layout';
 
 type Tab = 'open' | 'paid';
@@ -179,6 +179,8 @@ function BillRow(props: {
               value={cents ? formatCents(cents) : ''}
               placeholder="0,00"
               placeholderTextColor={colors.placeholder}
+              keyboardAppearance={getScheme()}
+              cursorColor={colors.primary}
               onChangeText={(v) => setCents(v.replace(/\D/g, '').replace(/^0+/, '').slice(0, 11))}
               keyboardType="numeric"
               autoFocus
@@ -229,7 +231,7 @@ function BillRow(props: {
   );
 }
 
-const styles = StyleSheet.create({
+const styles = createStyles(() => ({
   screen: { flex: 1, backgroundColor: colors.background },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingVertical: 8 },
   iconBtn: { width: 40, height: 40, borderRadius: radius.pill, alignItems: 'center', justifyContent: 'center' },
@@ -259,7 +261,7 @@ const styles = StyleSheet.create({
     borderColor: colors.outlineMedium,
     borderRadius: radius.md,
   },
-  rowOverdue: { borderColor: colors.error, backgroundColor: '#fff8f7' },
+  rowOverdue: { borderColor: colors.error, backgroundColor: colors.errorSoft },
   rowTop: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   tile: { width: 44, height: 44, borderRadius: radius.pill, backgroundColor: colors.surfaceHigh, alignItems: 'center', justifyContent: 'center' },
   info: { flex: 1, gap: 2 },
@@ -290,4 +292,4 @@ const styles = StyleSheet.create({
   },
   currency: { fontFamily: fonts.semiBold, fontSize: 14, color: colors.textSubtle },
   amountInput: { flex: 1, padding: 0, fontFamily: fonts.semiBold, fontSize: 16, color: colors.text },
-});
+}));

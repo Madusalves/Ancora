@@ -1,6 +1,6 @@
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Pressable, View } from 'react-native';
 
-import { colors, radius } from '@/theme';
+import { colors, radius, createStyles } from '@/theme';
 
 type ToggleProps = { value: boolean; onChange: (v: boolean) => void; accessibilityLabel?: string };
 
@@ -18,7 +18,7 @@ export function Toggle({ value, onChange, accessibilityLabel }: ToggleProps) {
   );
 }
 
-const styles = StyleSheet.create({
+const styles = createStyles(() => ({
   track: { width: 44, height: 24, borderRadius: radius.pill, backgroundColor: colors.surfaceHighest },
   trackOn: { backgroundColor: colors.primary },
   thumb: {
@@ -33,4 +33,4 @@ const styles = StyleSheet.create({
     borderColor: colors.switchBorder,
   },
   thumbOn: { left: 22, borderColor: colors.surface },
-});
+}));

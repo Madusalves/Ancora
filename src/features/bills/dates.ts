@@ -5,10 +5,18 @@ import { colors } from '@/theme';
 export type DueStatus = 'overdue' | 'today' | 'soon' | 'later';
 
 export const STATUS_COLOR: Record<DueStatus, string> = {
-  overdue: colors.error,
-  today: colors.warning,
-  soon: colors.warning,
-  later: colors.textMuted,
+  get overdue() {
+    return colors.error;
+  },
+  get today() {
+    return colors.warning;
+  },
+  get soon() {
+    return colors.warning;
+  },
+  get later() {
+    return colors.textMuted;
+  },
 };
 
 const pad = (n: number) => String(n).padStart(2, '0');

@@ -1,8 +1,8 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { t } from '@/i18n/pt-BR';
-import { colors, fonts } from '@/theme';
+import { colors, fonts, createStyles } from '@/theme';
 
 export function ComingSoon({ title }: { title: string }) {
   return (
@@ -16,10 +16,10 @@ export function ComingSoon({ title }: { title: string }) {
   );
 }
 
-const styles = StyleSheet.create({
+const styles = createStyles(() => ({
   screen: { flex: 1, backgroundColor: colors.background },
   center: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 8, padding: 24 },
   title: { fontFamily: fonts.displayBold, fontSize: 24, color: colors.text },
   soon: { fontFamily: fonts.semiBold, fontSize: 14, color: colors.primary },
   body: { fontFamily: fonts.regular, fontSize: 14, color: colors.textMuted, textAlign: 'center' },
-});
+}));

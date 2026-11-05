@@ -2,7 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
 import { useMemo, useState } from 'react';
-import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Pressable, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Card } from '@/components/Card';
@@ -17,7 +17,7 @@ import { useRecentTransactions } from '@/features/home/api';
 import { formatBRL } from '@/features/transactions/format';
 import { CATEGORY_ICONS } from '@/features/transactions/icons';
 import { t } from '@/i18n/pt-BR';
-import { colors, fonts, radius } from '@/theme';
+import { colors, fonts, radius, createStyles } from '@/theme';
 import { useScreenLayout } from '@/theme/layout';
 
 const MONTHS = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
@@ -238,7 +238,7 @@ function Bar({ ratio, color }: { ratio: number; color: string }) {
   );
 }
 
-const styles = StyleSheet.create({
+const styles = createStyles(() => ({
   flex: { flex: 1 },
   screen: { flex: 1, backgroundColor: colors.background },
   content: { padding: 16, gap: 16, paddingBottom: 32 },
@@ -289,10 +289,10 @@ const styles = StyleSheet.create({
     padding: 14,
     backgroundColor: colors.warningSoft,
     borderWidth: 1,
-    borderColor: '#fcd34d',
+    borderColor: `${colors.warning}66`,
     borderRadius: radius.md,
   },
-  alertOver: { backgroundColor: colors.errorSoft, borderColor: '#f5a8a1' },
+  alertOver: { backgroundColor: colors.errorSoft, borderColor: `${colors.error}66` },
   alertTitle: { fontFamily: fonts.semiBold, fontSize: 13 },
   alertBody: { fontFamily: fonts.regular, fontSize: 12, lineHeight: 17, color: colors.text },
 
@@ -324,4 +324,4 @@ const styles = StyleSheet.create({
   },
   remove: { fontFamily: fonts.medium, fontSize: 12, color: colors.textSubtle },
   removeConfirm: { fontFamily: fonts.semiBold, fontSize: 12, color: colors.error },
-});
+}));

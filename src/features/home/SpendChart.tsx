@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import { type LayoutChangeEvent, Pressable, StyleSheet, Text, View } from 'react-native';
+import { type LayoutChangeEvent, Pressable, Text, View } from 'react-native';
 import Svg, { Circle, Defs, G, LinearGradient, Path, Stop, Text as SvgText } from 'react-native-svg';
 
 import { formatCompact } from '@/features/transactions/format';
-import { colors, fonts } from '@/theme';
+import { colors, fonts, createStyles } from '@/theme';
 
 import type { Bucket } from './stats';
 
@@ -142,9 +142,9 @@ export function SpendChart({ buckets }: { buckets: Bucket[] }) {
   );
 }
 
-const styles = StyleSheet.create({
+const styles = createStyles(() => ({
   labels: { flexDirection: 'row', marginTop: 6 },
   labelCol: { flex: 1, alignItems: 'center', paddingVertical: 4 },
   label: { fontFamily: fonts.medium, fontSize: 12, lineHeight: 16, color: colors.textMuted },
   labelOn: { fontFamily: fonts.semiBold, color: colors.primary },
-});
+}));

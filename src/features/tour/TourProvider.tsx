@@ -3,7 +3,8 @@ import { type HostInstance, Pressable, StyleSheet, Text, View } from 'react-nati
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { t } from '@/i18n/pt-BR';
-import { colors, fonts, radius } from '@/theme';
+import { colors, fonts, radius, createStyles } from '@/theme';
+import { useThemeControl } from '@/theme/ThemeProvider';
 
 import { markTourSeen } from './storage';
 
@@ -25,6 +26,7 @@ const MARGIN = 16;
 
 /** Guia inicial: escurece a tela, destaca um elemento por vez e explica o que ele faz. */
 export function TourProvider({ children }: { children: ReactNode }) {
+  useThemeControl(); // re-renderiza o aviso do tour quando o tema muda
   const targets = useRef(new Map<string, RefObject<HostInstance | null>>());
   const [steps, setSteps] = useState<TourStep[]>([]);
   const [index, setIndex] = useState(0);
@@ -193,7 +195,7 @@ function TourOverlay({
 
 const DIM = 'rgba(15,23,42,0.72)';
 
-const styles = StyleSheet.create({
+const styles = createStyles(() => ({
   root: { zIndex: 9999, elevation: 9999 },
   dim: { position: 'absolute', backgroundColor: DIM },
   ring: {
@@ -224,7 +226,7 @@ const styles = StyleSheet.create({
   btnText: { fontFamily: fonts.semiBold, fontSize: 14, color: colors.onPrimary },
   btnGhost: { paddingHorizontal: 12, height: 38, alignItems: 'center', justifyContent: 'center' },
   btnGhostText: { fontFamily: fonts.semiBold, fontSize: 14, color: colors.textMuted },
-});
+}));
 
 export function useTour() {
   const ctx = useContext(TourContext);

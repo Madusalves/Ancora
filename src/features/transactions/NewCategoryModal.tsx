@@ -1,12 +1,12 @@
 import { Image } from 'expo-image';
 import { useState } from 'react';
-import { KeyboardAvoidingView, Modal, Platform, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { KeyboardAvoidingView, Modal, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { Button } from '@/components/Button';
 import { Category, TxType, useCreateCategory } from '@/features/transactions/api';
 import { CATEGORY_ICONS } from '@/features/transactions/icons';
 import { t } from '@/i18n/pt-BR';
-import { colors, fonts, radius } from '@/theme';
+import { colors, fonts, radius, createStyles, getScheme } from '@/theme';
 
 /** Modal para criar uma categoria do usuário (compartilhado entre transação e limites). */
 export function NewCategoryModal(props: {
@@ -47,7 +47,7 @@ export function NewCategoryModal(props: {
 
   return (
     <Modal visible={props.visible} transparent animationType="fade" onRequestClose={close}>
-      <KeyboardAvoidingView style={styles.backdrop} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+      <KeyboardAvoidingView style={styles.backdrop} behavior="padding">
         <Pressable style={StyleSheet.absoluteFill} onPress={close} accessibilityLabel={t.tx.newCategoryCancel} />
         <View style={styles.card}>
           <Text style={styles.title}>{t.tx.newCategoryTitle}</Text>
@@ -65,6 +65,8 @@ export function NewCategoryModal(props: {
                 autoFocus
                 placeholder={t.tx.newCategoryPlaceholder}
                 placeholderTextColor={colors.placeholder}
+                keyboardAppearance={getScheme()}
+                cursorColor={colors.primary}
                 style={styles.inputText}
               />
             </View>
@@ -98,8 +100,8 @@ export function NewCategoryModal(props: {
   );
 }
 
-const styles = StyleSheet.create({
-  backdrop: { flex: 1, justifyContent: 'center', padding: 16, backgroundColor: 'rgba(0,0,0,0.4)' },
+const styles = createStyles(() => ({
+  backdrop: { flex: 1, justifyContent: 'center', padding: 16, backgroundColor: colors.backdrop },
   card: {
     padding: 20,
     gap: 16,
@@ -137,4 +139,4 @@ const styles = StyleSheet.create({
   error: { fontFamily: fonts.medium, fontSize: 12, lineHeight: 16, color: colors.error, textAlign: 'center' },
   cancel: { alignItems: 'center', paddingVertical: 8 },
   cancelText: { fontFamily: fonts.semiBold, fontSize: 12, lineHeight: 16, letterSpacing: 0.6, color: colors.primary },
-});
+}));

@@ -1,10 +1,10 @@
-import { ActivityIndicator, FlatList, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, FlatList, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useRecentTransactions } from '@/features/home/api';
 import { TransactionRow } from '@/features/home/TransactionRow';
 import { t } from '@/i18n/pt-BR';
-import { colors, fonts } from '@/theme';
+import { colors, fonts, createStyles } from '@/theme';
 import { useScreenLayout } from '@/theme/layout';
 
 /** Lista simples das transações dos últimos 12 meses (não há design no Figma). */
@@ -34,7 +34,7 @@ export default function Transactions() {
   );
 }
 
-const styles = StyleSheet.create({
+const styles = createStyles(() => ({
   screen: { flex: 1, backgroundColor: colors.background },
   header: { padding: 16 },
   eyebrow: { fontFamily: fonts.semiBold, fontSize: 10, letterSpacing: 1, color: colors.textSubtle },
@@ -44,4 +44,4 @@ const styles = StyleSheet.create({
   pad: { padding: 16 },
   error: { fontFamily: fonts.medium, fontSize: 12, color: colors.error, textAlign: 'center' },
   empty: { fontFamily: fonts.regular, fontSize: 14, color: colors.textMuted, textAlign: 'center', padding: 24 },
-});
+}));

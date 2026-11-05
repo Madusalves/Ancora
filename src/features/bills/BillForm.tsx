@@ -1,16 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import {
-  KeyboardAvoidingView,
-  Platform,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from 'react-native';
+import { KeyboardAvoidingView, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Button } from '@/components/Button';
@@ -20,7 +11,7 @@ import { useCategories } from '@/features/transactions/api';
 import { NewCategoryModal } from '@/features/transactions/NewCategoryModal';
 import { formatCents, toISODate } from '@/features/transactions/format';
 import { t } from '@/i18n/pt-BR';
-import { colors, fonts, radius } from '@/theme';
+import { colors, fonts, radius, createStyles, getScheme } from '@/theme';
 
 import type { NewBill } from './api';
 
@@ -85,7 +76,7 @@ export function BillForm({ title, saveLabel, initial, onSubmit }: Props) {
 
   return (
     <SafeAreaView style={styles.screen}>
-      <KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+      <KeyboardAvoidingView style={styles.flex} behavior="padding">
         <View style={styles.header}>
           <Pressable accessibilityRole="button" accessibilityLabel="Voltar" onPress={() => router.back()} style={styles.iconBtn}>
             <Ionicons name="arrow-back" size={22} color={colors.text} />
@@ -105,6 +96,8 @@ export function BillForm({ title, saveLabel, initial, onSubmit }: Props) {
                 }}
                 placeholder={f.namePlaceholder}
                 placeholderTextColor={colors.placeholder}
+                keyboardAppearance={getScheme()}
+                cursorColor={colors.primary}
                 style={styles.input}
               />
             </Field>
@@ -124,6 +117,8 @@ export function BillForm({ title, saveLabel, initial, onSubmit }: Props) {
                   value={cents ? formatCents(cents) : ''}
                   placeholder={variable ? t.bills.amountTbd : '0,00'}
                   placeholderTextColor={colors.placeholder}
+                  keyboardAppearance={getScheme()}
+                  cursorColor={colors.primary}
                   onChangeText={(v) => {
                     setError('');
                     setCents(v.replace(/\D/g, '').replace(/^0+/, '').slice(0, 11));
@@ -214,7 +209,7 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
   );
 }
 
-const styles = StyleSheet.create({
+const styles = createStyles(() => ({
   flex: { flex: 1 },
   screen: { flex: 1, backgroundColor: colors.background },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingVertical: 8 },
@@ -275,6 +270,6 @@ const styles = StyleSheet.create({
   reminder: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingHorizontal: 4 },
   reminderText: { flex: 1, fontFamily: fonts.regular, fontSize: 12, lineHeight: 16, color: colors.textMuted },
   error: { fontFamily: fonts.medium, fontSize: 12, color: colors.error, textAlign: 'center' },
-  footer: { padding: 16, backgroundColor: 'rgba(247,249,251,0.95)' },
+  footer: { padding: 16, backgroundColor: 'colors.scrimStrong' },
   disabled: { opacity: 0.6 },
-});
+}));

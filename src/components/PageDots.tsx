@@ -1,6 +1,6 @@
-import { StyleSheet, View } from 'react-native';
+import { View } from 'react-native';
 
-import { colors, radius } from '@/theme';
+import { colors, radius, createStyles } from '@/theme';
 
 export function PageDots({ count, index }: { count: number; index: number }) {
   return (
@@ -15,8 +15,8 @@ export function PageDots({ count, index }: { count: number; index: number }) {
   );
 }
 
-const styles = StyleSheet.create({
+const styles = createStyles(() => ({
   row: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   dot: { width: 8, height: 8, borderRadius: radius.pill, backgroundColor: colors.dot },
   active: { width: 32, backgroundColor: colors.primary },
-});
+}));
