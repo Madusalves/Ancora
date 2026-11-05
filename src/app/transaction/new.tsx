@@ -1,17 +1,9 @@
 import DateTimePicker, { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
 import { Image } from 'expo-image';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { ReactNode, useState } from 'react';
-import {
-  KeyboardAvoidingView,
-  Platform,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from 'react-native';
+import { ReactNode, useRef, useState } from 'react';
+import { KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
+import type { ScrollViewInstance } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Button } from '@/components/Button';
@@ -27,7 +19,7 @@ import {
 import { CATEGORY_ICONS } from '@/features/transactions/icons';
 import { NewCategoryModal } from '@/features/transactions/NewCategoryModal';
 import { t } from '@/i18n/pt-BR';
-import { colors, fonts, radius } from '@/theme';
+import { colors, fonts, radius, createStyles, getScheme } from '@/theme';
 
 const icon = {
   back: require('../../../assets/icons/tx/back.svg'),
@@ -56,6 +48,8 @@ export default function NewTransaction() {
   const [notes, setNotes] = useState('');
   const [recurring, setRecurring] = useState(false);
   const [error, setError] = useState('');
+  const [errorField, setErrorField] = useState<'amount' | 'description' | null>(null);
+  const scrollRef = useRef<ScrollViewInstance>(null);
   const [showNewCategory, setShowNewCategory] = useState(false);
 
   const categories = useCategories(type);
@@ -84,12 +78,22 @@ export default function NewTransaction() {
     }
   };
 
+  const fail = (message: string, field: 'amount' | 'description' | null) => {
+    setError(message);
+    setErrorField(field);
+    if (field === 'amount') scrollRef.current?.scrollTo({ y: 0, animated: true });
+  };
+  const clearError = () => {
+    setError('');
+    setErrorField(null);
+  };
+
   const save = async () => {
     if (create.isPending) return;
-    if (amount <= 0) return setError(t.tx.errors.amount);
-    if (!description.trim()) return setError(t.tx.errors.description);
-    if (!wallet) return setError(t.tx.errors.account);
-    setError('');
+    if (amount <= 0) return fail(t.tx.errors.amount, 'amount');
+    if (!description.trim()) return fail(t.tx.errors.description, 'description');
+    if (!wallet) return fail(t.tx.errors.account, null);
+    clearError();
     try {
       await create.mutateAsync({
         accountId: wallet.id,
@@ -104,7 +108,7 @@ export default function NewTransaction() {
       });
       router.back();
     } catch {
-      setError(t.tx.errors.save);
+      fail(t.tx.errors.save, null);
     }
   };
 
@@ -112,7 +116,7 @@ export default function NewTransaction() {
 
   return (
     <SafeAreaView style={styles.screen} edges={['top', 'bottom']}>
-      <KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+      <KeyboardAvoidingView style={styles.flex} behavior="padding">
         <View style={styles.header}>
           <Pressable accessibilityRole="button" accessibilityLabel="Voltar" onPress={() => router.back()} style={styles.headerBtn}>
             <Image source={icon.back} style={{ width: 16, height: 16 }} contentFit="contain" />
@@ -123,7 +127,7 @@ export default function NewTransaction() {
           </View>
         </View>
 
-        <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
+        <ScrollView ref={scrollRef} contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
           {/* Tipo */}
           <View style={styles.segment}>
             <SegmentItem
@@ -143,20 +147,20 @@ export default function NewTransaction() {
           </View>
 
           {/* Valor */}
-          <View style={[styles.card, styles.amountCard]}>
+          <View style={[styles.card, styles.amountCard, errorField === 'amount' && styles.cardError]}>
             <Text style={styles.amountLabel}>{t.tx.amountLabel}</Text>
             <View style={styles.amountRow}>
               <Text style={styles.currency}>R$</Text>
               <TextInput
                 value={formatCents(cents)}
                 onChangeText={(v) => {
-                  setError('');
+                  clearError();
                   setCents(v.replace(/\D/g, '').replace(/^0+/, '').slice(0, 11));
                 }}
                 keyboardType="numeric"
                 accessibilityLabel={t.tx.amountLabel}
                 selectionColor={colors.primary}
-                style={styles.amountInput}
+                style={[styles.amountInput, { fontSize: amountFontSize(cents.length) }]}
               />
             </View>
             <View style={styles.chip}>
@@ -207,15 +211,17 @@ export default function NewTransaction() {
           {/* Detalhes */}
           <View style={[styles.card, styles.form]}>
             <Labeled label={t.tx.description}>
-              <FieldInput iconSource={icon.description} iconSize={{ width: 13.5, height: 12 }}>
+              <FieldInput iconSource={icon.description} iconSize={{ width: 13.5, height: 12 }} invalid={errorField === 'description'}>
                 <TextInput
                   value={description}
                   onChangeText={(v) => {
-                    setError('');
+                    clearError();
                     setDescription(v);
                   }}
                   placeholder={t.tx.descriptionPlaceholder}
                   placeholderTextColor={colors.placeholder}
+                  keyboardAppearance={getScheme()}
+                  cursorColor={colors.primary}
                   style={styles.inputText}
                 />
               </FieldInput>
@@ -252,6 +258,8 @@ export default function NewTransaction() {
                   onChangeText={setNotes}
                   placeholder={t.tx.notesPlaceholder}
                   placeholderTextColor={colors.placeholder}
+                  keyboardAppearance={getScheme()}
+                  cursorColor={colors.primary}
                   autoCapitalize="none"
                   style={styles.inputText}
                 />
@@ -273,14 +281,15 @@ export default function NewTransaction() {
             <Toggle value={recurring} onChange={setRecurring} accessibilityLabel={t.tx.recurring} />
           </View>
 
-          {error ? (
-            <Text accessibilityLiveRegion="polite" style={styles.error}>
-              {error}
-            </Text>
-          ) : null}
         </ScrollView>
 
         <View style={styles.footer}>
+          {error ? (
+            <View accessibilityLiveRegion="polite" accessibilityRole="alert" style={styles.errorBanner}>
+              <Text style={styles.errorIcon}>!</Text>
+              <Text style={styles.error}>{error}</Text>
+            </View>
+          ) : null}
           <Button
             large
             label={create.isPending ? t.tx.saving : t.tx.save}
@@ -306,6 +315,14 @@ export default function NewTransaction() {
 }
 
 const ADD_TILE = 'add' as const;
+
+/** Reduz a fonte conforme o tamanho do valor para nunca cortar. */
+function amountFontSize(digits: number) {
+  if (digits <= 6) return 40;
+  if (digits <= 8) return 34;
+  if (digits <= 10) return 28;
+  return 24;
+}
 
 function chunk<T>(items: T[], size: number): T[][] {
   const out: T[][] = [];
@@ -369,10 +386,11 @@ function FieldInput(props: {
   iconSource: number;
   iconSize: { width: number; height: number };
   rightPad?: number;
+  invalid?: boolean;
   children: ReactNode;
 }) {
   return (
-    <View style={[styles.input, props.rightPad ? { paddingRight: props.rightPad } : null]}>
+    <View style={[styles.input, props.invalid && styles.inputError, props.rightPad ? { paddingRight: props.rightPad } : null]}>
       <View style={styles.inputIcon}>
         <Image source={props.iconSource} style={props.iconSize} contentFit="contain" />
       </View>
@@ -381,7 +399,7 @@ function FieldInput(props: {
   );
 }
 
-const styles = StyleSheet.create({
+const styles = createStyles(() => ({
   flex: { flex: 1 },
   screen: { flex: 1, backgroundColor: colors.background },
   header: {
@@ -437,12 +455,15 @@ const styles = StyleSheet.create({
     color: colors.textMuted,
     marginBottom: 4,
   },
-  amountRow: { flexDirection: 'row', alignItems: 'baseline', justifyContent: 'center', gap: 6 },
+  amountRow: { flexDirection: 'row', alignItems: 'baseline', justifyContent: 'center', gap: 6, maxWidth: '100%' },
+  cardError: { borderColor: colors.error },
+  inputError: { borderColor: colors.error, borderWidth: 1.5 },
   currency: { ...typo(fonts.displaySemiBold, 24, 32, -0.24), color: colors.textSubtle },
   amountInput: {
     ...typo(fonts.displayBold, 40, 48, -1),
     color: colors.text,
-    minWidth: 120,
+    minWidth: 60,
+    flexShrink: 1,
     padding: 0,
     textAlign: 'center',
   },
@@ -455,7 +476,7 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     backgroundColor: colors.surfaceLow,
     borderWidth: 1,
-    borderColor: 'rgba(188,202,192,0.4)',
+    borderColor: colors.outlineMedium,
     borderRadius: radius.pill,
   },
   walletNote: { marginTop: 12, textAlign: 'center', fontFamily: fonts.regular, fontSize: 11, lineHeight: 15, color: colors.textSubtle },
@@ -529,11 +550,24 @@ const styles = StyleSheet.create({
     borderRadius: radius.sm,
   },
   recurringTitle: { fontFamily: fonts.semiBold, fontSize: 14, lineHeight: 20, color: colors.text },
-  error: { fontFamily: fonts.medium, fontSize: 12, lineHeight: 16, color: colors.error, textAlign: 'center' },
+  errorBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    backgroundColor: colors.surface,
+    borderWidth: 1,
+    borderColor: colors.error,
+    borderRadius: radius.sm,
+  },
+  errorIcon: { width: 20, height: 20, borderRadius: 10, overflow: 'hidden', textAlign: 'center', lineHeight: 20, fontFamily: fonts.displayBold, fontSize: 12, color: colors.surface, backgroundColor: colors.error },
+  error: { flex: 1, fontFamily: fonts.semiBold, fontSize: 13, lineHeight: 18, color: colors.error },
 
-  footer: { padding: 16, backgroundColor: 'rgba(247,249,251,0.95)' },
+  footer: { padding: 16, backgroundColor: colors.background },
   disabled: { opacity: 0.6 },
-});
+}));
 
 function typo(fontFamily: string, fontSize: number, lineHeight: number, letterSpacing: number) {
   return { fontFamily, fontSize, lineHeight, letterSpacing };
